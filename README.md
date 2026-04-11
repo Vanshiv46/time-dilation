@@ -2,7 +2,7 @@
 
 > A fully animated, interactive website explaining **Time Dilation** from Einstein's Special Theory of Relativity, built for B.Tech 1st Year Engineering Physics students.
 
-🌐 **Live Demo**: [View on GitHub Pages](https://YOUR-USERNAME.github.io/time-dilation)
+🌐 **Live Demo**: [View on GitHub Pages](https://Vanshiv46.github.io/time-dilation)
 
 ---
 

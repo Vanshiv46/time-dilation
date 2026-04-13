@@ -4,506 +4,229 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Time Dilation — Vanshiv Garg</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;700&family=Bebas+Neue&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=IBM+Plex+Mono:wght@300;400;500;700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#080705;--bg2:#0f0d09;--bg3:#141109;
+  --surface:rgba(255,215,90,0.035);--border:rgba(255,215,90,0.1);
+  --gold:#d4a843;--gold2:#f0c84a;--orange:#c94f22;--teal:#4ab89a;
+  --text:#ede8dc;--muted:rgba(237,232,220,0.42);--faint:rgba(237,232,220,0.15);
+  --head:'Bebas Neue',sans-serif;--mono:'IBM Plex Mono',monospace;--body:'DM Sans',sans-serif;
+}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:var(--body);overflow-x:hidden;line-height:1.65}
+#stars{position:fixed;inset:0;z-index:0;pointer-events:none}
 
-  :root {
-    --bg: #0e0c08;
-    --bg2: #141209;
-    --surface: rgba(255,220,100,0.04);
-    --border: rgba(255,220,100,0.12);
-    --accent: #e8c84a;
-    --accent2: #e05c2a;
-    --accent3: #6bcfb0;
-    --text: #f0ead8;
-    --muted: rgba(240,234,216,0.45);
-    --font-head: 'Bebas Neue', sans-serif;
-    --font-body: 'DM Sans', sans-serif;
-    --font-mono: 'IBM Plex Mono', monospace;
-  }
+/* NAV */
+nav{
+  position:fixed;top:0;left:0;right:0;z-index:200;
+  display:flex;justify-content:space-between;align-items:center;
+  padding:0.9rem 3rem;
+  background:rgba(8,7,5,0.85);backdrop-filter:blur(20px);
+  border-bottom:1px solid var(--border);
+}
+.nav-brand{display:flex;align-items:center;gap:0.75rem}
+.nav-mark{
+  width:34px;height:34px;border:1px solid var(--gold);
+  display:flex;align-items:center;justify-content:center;
+  font-family:var(--mono);font-size:0.62rem;color:var(--gold);letter-spacing:0.05em;
+}
+.nav-text{font-family:var(--mono);font-size:0.72rem;color:var(--text);letter-spacing:0.14em;text-transform:uppercase}
+.nav-text em{color:var(--gold);font-style:normal}
+.nav-links{display:flex;gap:2.2rem}
+.nav-links a{
+  color:var(--muted);text-decoration:none;font-family:var(--mono);
+  font-size:0.62rem;letter-spacing:0.12em;text-transform:uppercase;transition:color 0.2s;
+}
+.nav-links a:hover{color:var(--gold)}
 
-  html { scroll-behavior: smooth; }
+/* LAYOUT */
+section{position:relative;z-index:1;min-height:100vh;display:flex;align-items:center;padding:8rem 3rem 6rem}
+.container{max-width:1120px;margin:0 auto;width:100%}
 
-  body {
-    background: var(--bg);
-    color: var(--text);
-    font-family: var(--font-body);
-    overflow-x: hidden;
-    line-height: 1.6;
-  }
+/* HERO */
+#hero{justify-content:center;text-align:center;flex-direction:column;padding-top:5rem}
+.eyebrow{
+  display:inline-flex;align-items:center;gap:1rem;
+  font-family:var(--mono);font-size:0.6rem;color:var(--gold);
+  letter-spacing:0.2em;text-transform:uppercase;margin-bottom:2.5rem;animation:up 1s ease both;
+}
+.eyebrow::before,.eyebrow::after{content:'';width:36px;height:1px;background:var(--gold);opacity:0.4}
+.h-title{
+  font-family:var(--head);font-size:clamp(5.5rem,14vw,12rem);
+  line-height:0.87;letter-spacing:0.05em;animation:up 1s ease 0.1s both;margin-bottom:1rem;
+}
+.h-title .stroke{display:block;color:transparent;-webkit-text-stroke:1.5px rgba(212,168,67,0.38)}
+.h-sub{
+  font-family:var(--mono);font-size:0.76rem;color:var(--muted);
+  letter-spacing:0.07em;max-width:480px;margin:0 auto 3rem;
+  animation:up 1s ease 0.2s both;line-height:1.9;
+}
+.h-btns{display:flex;gap:1rem;justify-content:center;flex-wrap:wrap;animation:up 1s ease 0.3s both}
+.btn{
+  font-family:var(--mono);font-size:0.68rem;letter-spacing:0.12em;text-transform:uppercase;
+  padding:0.8rem 2rem;text-decoration:none;cursor:pointer;transition:all 0.2s;border:none;display:inline-block;
+}
+.btn-g{background:var(--gold);color:#080705;font-weight:700}
+.btn-g:hover{transform:translate(-3px,-3px);box-shadow:5px 5px 0 var(--orange)}
+.btn-o{background:transparent;color:var(--text);border:1px solid rgba(237,232,220,0.18)}
+.btn-o:hover{border-color:var(--gold);color:var(--gold)}
 
-  /* ── STARS CANVAS ── */
-  #stars-canvas {
-    position: fixed;
-    inset: 0;
-    z-index: 0;
-    pointer-events: none;
-  }
+/* TICKER */
+.ticker{margin-top:5rem;overflow:hidden;mask-image:linear-gradient(90deg,transparent,#000 12%,#000 88%,transparent);animation:up 1s ease 0.5s both}
+.ticker-inner{display:flex;white-space:nowrap;animation:scroll 28s linear infinite}
+.t-item{
+  display:inline-flex;align-items:center;gap:0;
+  font-family:var(--mono);font-size:0.6rem;color:var(--faint);
+  letter-spacing:0.08em;padding:0 2rem;border-right:1px solid var(--border);
+}
+.t-item b{color:var(--gold);margin-right:0.5rem;font-weight:500}
+@keyframes scroll{from{transform:translateX(0)}to{transform:translateX(-50%)}}
 
-  /* ── NAV ── */
-  nav {
-    position: fixed;
-    top: 0; left: 0; right: 0;
-    z-index: 100;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 1rem 3rem;
-    background: rgba(3,3,10,0.7);
-    backdrop-filter: blur(16px);
-    border-bottom: 1px solid var(--border);
-  }
-  .nav-logo {
-    font-family: var(--font-head);
-    font-size: 1.5rem;
-    font-weight: 400;
-    letter-spacing: 0.08em;
-    color: var(--accent);
-  }
-  .nav-links { display: flex; gap: 2rem; }
-  .nav-links a {
-    color: var(--muted);
-    text-decoration: none;
-    font-size: 0.75rem;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    transition: color 0.2s;
-  }
-  .nav-links a:hover { color: var(--text); }
+/* SECTION LABELS */
+.s-num{font-family:var(--mono);font-size:0.58rem;color:var(--gold);letter-spacing:0.2em;text-transform:uppercase;margin-bottom:0.7rem}
+.s-title{font-family:var(--head);font-size:clamp(2.8rem,5.5vw,5.5rem);line-height:0.93;letter-spacing:0.04em;margin-bottom:1.5rem}
+.s-body{color:var(--muted);font-size:0.88rem;line-height:1.85;margin-bottom:1rem;max-width:510px}
 
-  /* ── SECTIONS ── */
-  section {
-    position: relative;
-    z-index: 1;
-    min-height: 100vh;
-    display: flex;
-    align-items: center;
-    padding: 8rem 3rem 5rem;
-  }
-  .container { max-width: 1100px; margin: 0 auto; width: 100%; }
+/* TWO COL */
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:5.5rem;align-items:center}
 
-  /* ── HERO ── */
-  #hero {
-    min-height: 100vh;
-    justify-content: center;
-    text-align: center;
-    flex-direction: column;
-    padding-top: 6rem;
-  }
-  .hero-badge {
-    display: inline-block;
-    background: transparent;
-    border: 1px solid var(--accent);
-    color: var(--accent);
-    font-family: var(--font-mono);
-    font-size: 0.65rem;
-    letter-spacing: 0.2em;
-    text-transform: uppercase;
-    padding: 0.35rem 1rem;
-    border-radius: 0;
-    margin-bottom: 2rem;
-    animation: fadeUp 1s ease both;
-  }
-  .hero-title {
-    font-family: var(--font-head);
-    font-size: clamp(5rem, 16vw, 13rem);
-    font-weight: 400;
-    line-height: 0.88;
-    letter-spacing: 0.04em;
-    animation: fadeUp 1s ease 0.1s both;
-    margin-bottom: 1.5rem;
-  }
-  .hero-title .line2 {
-    display: block;
-    color: transparent;
-    -webkit-text-stroke: 1.5px rgba(232,200,74,0.5);
-  }
-  .hero-sub {
-    font-size: 0.95rem;
-    color: var(--muted);
-    max-width: 500px;
-    margin: 0 auto 3rem;
-    animation: fadeUp 1s ease 0.2s both;
-  }
-  .hero-cta {
-    display: inline-flex;
-    gap: 1rem;
-    animation: fadeUp 1s ease 0.3s both;
-    flex-wrap: wrap;
-    justify-content: center;
-  }
-  .btn {
-    padding: 0.75rem 2rem;
-    border-radius: 0;
-    font-family: var(--font-mono);
-    font-size: 0.75rem;
-    cursor: pointer;
-    text-decoration: none;
-    transition: all 0.2s;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-  }
-  .btn-primary {
-    background: var(--accent);
-    color: #0e0c08;
-    border: none;
-    font-weight: 700;
-  }
-  .btn-primary:hover { transform: translate(-2px,-2px); box-shadow: 4px 4px 0 var(--accent2); }
-  .btn-outline {
-    background: transparent;
-    color: var(--text);
-    border: 1px solid rgba(240,234,216,0.25);
-  }
-  .btn-outline:hover { border-color: var(--accent); color: var(--accent); }
+/* LIGHT CLOCK */
+.lc-box{background:rgba(20,17,9,0.9);border:1px solid var(--border);border-top:2px solid var(--gold);padding:1.75rem}
+.lc-lbl{font-family:var(--mono);font-size:0.58rem;letter-spacing:0.15em;color:var(--faint);text-transform:uppercase;margin-bottom:1rem}
+#lc-svg{width:100%;height:auto}
 
-  /* Scrolling clock strip */
-  .clock-strip {
-    margin-top: 5rem;
-    overflow: hidden;
-    animation: fadeUp 1s ease 0.5s both;
-  }
-  .clock-inner {
-    display: flex;
-    gap: 3rem;
-    white-space: nowrap;
-    animation: scrollLeft 20s linear infinite;
-  }
-  .clock-item {
-    font-size: 0.7rem;
-    color: var(--muted);
-    letter-spacing: 0.08em;
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-  }
-  .clock-dot {
-    width: 6px; height: 6px;
-    border-radius: 50%;
-    background: var(--accent);
-    animation: pulse 2s ease-in-out infinite;
-  }
-  @keyframes scrollLeft {
-    from { transform: translateX(0); }
-    to { transform: translateX(-50%); }
-  }
+/* POSTULATES */
+.posts{margin-top:2rem;display:flex;flex-direction:column;gap:0.7rem}
+.post{display:flex;gap:1rem;align-items:flex-start;padding:1rem 1.25rem;border:1px solid var(--border);border-left:3px solid var(--gold)}
+.post-n{font-family:var(--head);font-size:2rem;color:var(--gold);opacity:0.35;line-height:1;flex-shrink:0}
+.post-t{font-size:0.82rem;color:var(--muted);line-height:1.6;padding-top:0.3rem}
 
-  /* ── WHAT IS SECTION ── */
-  #what {
-    background: linear-gradient(180deg, transparent, rgba(93,158,255,0.03) 50%, transparent);
-  }
-  .two-col {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 5rem;
-    align-items: center;
-  }
-  .section-label {
-    font-size: 0.65rem;
-    letter-spacing: 0.2em;
-    text-transform: uppercase;
-    color: var(--accent);
-    margin-bottom: 1rem;
-    font-family: var(--font-mono);
-  }
-  .section-title {
-    font-family: var(--font-head);
-    font-size: clamp(2.5rem, 5vw, 5rem);
-    font-weight: 400;
-    line-height: 1.0;
-    letter-spacing: 0.04em;
-    margin-bottom: 1.5rem;
-  }
-  .section-body {
-    color: var(--muted);
-    font-size: 0.92rem;
-    line-height: 1.9;
-    margin-bottom: 1rem;
-    font-family: var(--font-body);
-  }
+/* FORMULA */
+#formula{background:var(--bg2)}
+.f-block{border:1px solid var(--border);border-top:2px solid var(--gold);padding:2.5rem;margin:2.5rem 0;position:relative}
+.f-block::after{content:'LORENTZ FACTOR';position:absolute;top:-0.55rem;right:1.5rem;font-family:var(--mono);font-size:0.5rem;letter-spacing:0.2em;color:var(--gold);background:var(--bg2);padding:0 0.5rem}
+.f-eq{font-family:var(--mono);font-size:clamp(1rem,2.8vw,1.85rem);letter-spacing:0.02em;margin-bottom:1.2rem}
+.f-eq .v{color:var(--gold);font-weight:700}.f-eq .op{color:var(--faint)}
+.f-alt{font-family:var(--mono);font-size:0.74rem;color:var(--faint);margin-bottom:2rem}
+.f-alt .hl{color:var(--teal)}
+.div-line{display:flex;align-items:center;gap:1rem;margin:1.5rem 0}
+.div-line::before,.div-line::after{content:'';flex:1;height:1px;background:var(--border)}
+.div-text{font-family:var(--mono);font-size:0.55rem;color:var(--faint);letter-spacing:0.15em;white-space:nowrap}
+.vars{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--border)}
+.vc{background:var(--bg2);padding:1.2rem;border-left:2px solid transparent;transition:border-color 0.2s}
+.vc:hover{border-left-color:var(--gold)}
+.vc-s{font-family:var(--head);font-size:2rem;color:var(--gold);letter-spacing:0.05em;margin-bottom:0.35rem}
+.vc-n{font-family:var(--mono);font-size:0.68rem;color:var(--text);letter-spacing:0.08em;margin-bottom:0.25rem}
+.vc-d{font-size:0.73rem;color:var(--muted);line-height:1.5}
 
-  /* Light Clock Animation */
-  .light-clock-box {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 16px;
-    padding: 2rem;
-    position: relative;
-    overflow: hidden;
-  }
-  .light-clock-label {
-    font-size: 0.7rem;
-    letter-spacing: 0.1em;
-    color: var(--muted);
-    margin-bottom: 1rem;
-    text-transform: uppercase;
-  }
-  #light-clock-svg { width: 100%; height: auto; }
+/* SIMULATOR */
+#interactive{background:var(--bg)}
+.sim-wrap{margin-top:2.5rem}
+.sl-row{margin-bottom:2rem}
+.sl-top{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:0.6rem}
+.sl-lbl{font-family:var(--mono);font-size:0.62rem;color:var(--muted);letter-spacing:0.1em;text-transform:uppercase}
+.vel-big{font-family:var(--head);font-size:3.5rem;color:var(--gold);letter-spacing:0.06em;line-height:1}
+input[type=range]{width:100%;-webkit-appearance:none;height:3px;background:var(--border);outline:none;border-radius:0}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;height:18px;border-radius:0;background:var(--gold);cursor:pointer;box-shadow:0 0 0 4px rgba(212,168,67,0.15);transition:box-shadow 0.2s}
+input[type=range]::-webkit-slider-thumb:hover{box-shadow:0 0 0 9px rgba(212,168,67,0.2)}
+.tl{display:flex;justify-content:space-between;font-family:var(--mono);font-size:0.56rem;color:var(--faint);margin-top:0.4rem;letter-spacing:0.05em}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--border);margin:2rem 0}
+.st{background:var(--bg);padding:1.25rem;text-align:center}
+.st-v{font-family:var(--head);font-size:2.2rem;color:var(--gold);display:block;margin-bottom:0.15rem;letter-spacing:0.05em}
+.st-l{font-family:var(--mono);font-size:0.56rem;color:var(--faint);letter-spacing:0.1em;text-transform:uppercase}
+#rkt{width:100%;height:150px;background:rgba(0,0,0,0.55);border:1px solid var(--border);display:block}
+.cmp{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--border);margin-top:1.5rem}
+.cb{background:var(--bg);padding:2rem;text-align:center}
+.cb-l{font-family:var(--mono);font-size:0.6rem;color:var(--muted);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:0.75rem}
+.cb-v{font-family:var(--head);font-size:4rem;line-height:1;letter-spacing:0.05em}
+.cb.e .cb-v{color:var(--gold)}.cb.r .cb-v{color:var(--orange)}
+.cb-u{font-family:var(--mono);font-size:0.6rem;color:var(--faint);margin-top:0.35rem}
+#ins{margin-top:1.5rem;padding:1.2rem;border:1px solid var(--border);border-left:3px solid var(--gold);font-family:var(--mono);font-size:0.73rem;color:var(--muted);line-height:1.8}
 
-  /* ── FORMULA SECTION ── */
-  #formula { background: var(--bg2); }
-  .formula-center { text-align: center; max-width: 800px; margin: 0 auto; }
-  .formula-display {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 0;
-    padding: 3rem 2rem;
-    margin: 3rem 0;
-    position: relative;
-    overflow: hidden;
-    border-left: 3px solid var(--accent);
-  }
-  .formula-display::before {
-    content: '';
-    position: absolute;
-    inset: -1px;
-    border-radius: 0;
-    background: linear-gradient(135deg, rgba(232,200,74,0.08), transparent 50%, rgba(224,92,42,0.05));
-    z-index: -1;
-  }
-  .formula-text {
-    font-family: var(--font-mono);
-    font-size: clamp(1.2rem, 3.5vw, 2rem);
-    color: var(--text);
-    letter-spacing: 0.02em;
-    margin-bottom: 1rem;
-  }
-  .formula-text span.var { color: var(--accent); font-weight: 700; }
-  .formula-text span.op { color: var(--muted); }
-  .formula-vars {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-    gap: 1rem;
-    margin-top: 2rem;
-    text-align: left;
-  }
-  .var-card {
-    background: rgba(255,220,100,0.03);
-    border: 1px solid var(--border);
-    border-radius: 0;
-    padding: 1rem;
-    border-left: 2px solid rgba(232,200,74,0.3);
-  }
-  .var-sym {
-    font-size: 1.3rem;
-    color: var(--accent);
-    margin-bottom: 0.4rem;
-  }
-  .var-name { font-size: 0.75rem; color: var(--text); margin-bottom: 0.25rem; }
-  .var-desc { font-size: 0.68rem; color: var(--muted); line-height: 1.5; }
+/* EXAMPLES */
+#examples{background:var(--bg3)}
+.ex-g{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--border);margin-top:3rem}
+.ex{background:var(--bg3);padding:2rem;position:relative;overflow:hidden;transition:background 0.25s}
+.ex::after{content:'';position:absolute;bottom:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--gold),var(--orange));transform:scaleX(0);transition:transform 0.3s;transform-origin:left}
+.ex:hover{background:rgba(212,168,67,0.04)}.ex:hover::after{transform:scaleX(1)}
+.ex-icon{font-size:2rem;margin-bottom:1.25rem;display:block}
+.ex-t{font-family:var(--head);font-size:1.55rem;letter-spacing:0.04em;margin-bottom:0.7rem}
+.ex-b{font-size:0.79rem;color:var(--muted);line-height:1.7}
+.ex-tag{display:inline-block;margin-top:1rem;font-family:var(--mono);font-size:0.6rem;color:var(--gold);letter-spacing:0.1em;border:1px solid rgba(212,168,67,0.3);padding:0.22rem 0.55rem}
 
-  /* ── INTERACTIVE SECTION ── */
-  #interactive { background: var(--bg); }
-  .interactive-wrap { width: 100%; }
-  .slider-section { margin-bottom: 3rem; }
-  .slider-label {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 0.75rem;
-  }
-  .slider-label span:first-child { font-size: 0.8rem; color: var(--muted); }
-  .slider-val {
-    font-family: var(--font-head);
-    font-size: 2rem;
-    font-weight: 400;
-    color: var(--accent);
-    letter-spacing: 0.08em;
-  }
-  input[type=range] {
-    width: 100%;
-    -webkit-appearance: none;
-    height: 4px;
-    border-radius: 2px;
-    background: var(--border);
-    outline: none;
-  }
-  input[type=range]::-webkit-slider-thumb {
-    -webkit-appearance: none;
-    width: 20px; height: 20px;
-    border-radius: 50%;
-    background: var(--accent);
-    cursor: pointer;
-    box-shadow: 0 0 0 4px rgba(93,158,255,0.2);
-    transition: box-shadow 0.2s;
-  }
-  input[type=range]::-webkit-slider-thumb:hover {
-    box-shadow: 0 0 0 8px rgba(93,158,255,0.3);
-  }
+/* HISTORY */
+#timeline{background:var(--bg2)}
+.tl-wrap{position:relative;margin-top:3rem;padding-left:2rem}
+.tl-wrap::before{content:'';position:absolute;left:0;top:0;bottom:0;width:1px;background:var(--border)}
+.tl-item{position:relative;padding:1.5rem 1.5rem 2rem;border-bottom:1px solid var(--border)}
+.tl-item::before{content:'';position:absolute;left:-2.3rem;top:1.75rem;width:8px;height:8px;border:1px solid var(--gold);background:var(--bg2)}
+.tl-yr{font-family:var(--head);font-size:2.5rem;color:var(--gold);opacity:0.32;line-height:1;margin-bottom:0.5rem;letter-spacing:0.05em}
+.tl-ev{font-family:var(--mono);font-size:0.78rem;color:var(--text);margin-bottom:0.4rem;letter-spacing:0.05em}
+.tl-dt{font-size:0.78rem;color:var(--muted);line-height:1.65}
 
-  .metrics-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 1rem;
-    margin: 2rem 0;
-  }
-  .metric {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 0;
-    padding: 1.25rem;
-    text-align: center;
-    transition: border-color 0.3s;
-  }
-  .metric:hover { border-color: rgba(232,200,74,0.4); }
-  .metric-num {
-    font-family: var(--font-head);
-    font-size: 2.5rem;
-    font-weight: 400;
-    color: var(--accent);
-    display: block;
-    margin-bottom: 0.25rem;
-    letter-spacing: 0.05em;
-  }
-  .metric-label { font-size: 0.65rem; color: var(--muted); letter-spacing: 0.1em; text-transform: uppercase; font-family: var(--font-mono); }
+/* TWIN */
+#twin{background:var(--bg)}
+.twin-g{display:grid;grid-template-columns:1fr 1fr;gap:5rem;align-items:center}
+#twin-c{width:100%;border:1px solid var(--border);border-top:2px solid var(--orange);display:block}
+.ib{margin-top:2rem;padding:1.2rem;border:1px solid rgba(74,184,154,0.2);border-left:3px solid var(--teal)}
+.ib-l{font-family:var(--mono);font-size:0.56rem;color:var(--teal);letter-spacing:0.15em;text-transform:uppercase;margin-bottom:0.5rem}
+.ib-t{font-size:0.8rem;color:var(--muted);line-height:1.7}
 
-  #rocket-canvas {
-    width: 100%;
-    height: 160px;
-    border: 1px solid var(--border);
-    border-radius: 0;
-    background: rgba(0,0,0,0.4);
-    margin-top: 1rem;
-  }
+/* VIDEOS */
+#videos{background:var(--bg3)}
+.vid-g{display:grid;grid-template-columns:1fr 1fr;gap:2rem;margin-top:3rem}
+.vid-wrap{border:1px solid var(--border);border-top:2px solid var(--gold);overflow:hidden}
+.vid-wrap.featured{border-top-color:var(--orange)}
+.vid-frame{position:relative;width:100%;padding-bottom:56.25%;background:#000}
+.vid-frame iframe{position:absolute;top:0;left:0;width:100%;height:100%;border:none;display:block}
+.vid-info{padding:0.85rem 1rem;background:rgba(8,7,5,0.9);display:flex;justify-content:space-between;align-items:center}
+.vid-t{font-family:var(--mono);font-size:0.66rem;color:var(--text);letter-spacing:0.05em}
+.vid-ch{font-family:var(--mono);font-size:0.58rem;color:var(--gold)}
 
-  .time-comparison {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 1rem;
-    margin-top: 1.5rem;
-  }
-  .time-box {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 0;
-    padding: 1.5rem;
-    text-align: center;
-  }
-  .time-box.earth { border-left: 3px solid var(--accent); }
-  .time-box.rocket { border-left: 3px solid var(--accent2); }
-  .time-box-label { font-family: var(--font-mono); font-size: 0.65rem; color: var(--muted); letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 0.75rem; }
-  .time-box-val {
-    font-family: var(--font-head);
-    font-size: 3rem;
-    font-weight: 400;
-    letter-spacing: 0.05em;
-  }
-  .time-box.earth .time-box-val { color: var(--accent); }
-  .time-box.rocket .time-box-val { color: var(--accent2); }
-  .time-box-unit { font-family: var(--font-mono); font-size: 0.65rem; color: var(--muted); margin-top: 0.25rem; }
+/* FOOTER */
+footer{position:relative;z-index:1;padding:4rem 3rem;border-top:1px solid var(--border);display:grid;grid-template-columns:1fr 1fr;gap:3rem;align-items:end}
+.fl-name{font-family:var(--head);font-size:3.5rem;letter-spacing:0.06em;color:var(--gold);line-height:1}
+.fl-sub{font-family:var(--mono);font-size:0.6rem;color:var(--faint);letter-spacing:0.15em;margin-top:0.5rem;text-transform:uppercase}
+.fr{text-align:right}
+.fr-cite{font-family:var(--mono);font-size:0.6rem;color:var(--faint);line-height:1.7}
+.fr-yr{font-family:var(--head);font-size:2rem;color:rgba(237,232,220,0.1);letter-spacing:0.1em;margin-top:0.5rem}
 
-  /* ── EXAMPLES SECTION ── */
-  #examples { background: var(--bg2); }
-  .examples-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-    gap: 1.5rem;
-    margin-top: 3rem;
-  }
-  .example-card {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 0;
-    padding: 2rem;
-    cursor: pointer;
-    transition: all 0.25s;
-    position: relative;
-    overflow: hidden;
-  }
-  .example-card::before {
-    content: '';
-    position: absolute;
-    top: 0; left: 0;
-    width: 3px;
-    height: 100%;
-    background: var(--accent);
-    transform: scaleY(0);
-    transition: transform 0.25s;
-    transform-origin: bottom;
-  }
-  .example-card:hover::before { transform: scaleY(1); }
-  .example-card:hover { transform: translateX(4px); border-color: rgba(232,200,74,0.25); }
-  .example-icon { font-size: 2rem; margin-bottom: 1rem; }
-  .example-title { font-family: var(--font-head); font-size: 1.5rem; font-weight: 400; margin-bottom: 0.75rem; letter-spacing: 0.05em; }
-  .example-body { font-size: 0.85rem; color: var(--muted); line-height: 1.7; font-family: var(--font-body); }
-  .example-stat {
-    display: inline-block;
-    background: transparent;
-    color: var(--accent);
-    font-family: var(--font-mono);
-    font-size: 0.68rem;
-    padding: 0.3rem 0.6rem;
-    margin-top: 1rem;
-    border: 1px solid rgba(232,200,74,0.3);
-    letter-spacing: 0.08em;
-  }
+/* REVEAL */
+.reveal{opacity:0;transform:translateY(34px);transition:opacity 0.8s ease,transform 0.8s ease}
+.reveal.in{opacity:1;transform:none}
+.d1{transition-delay:0.12s}.d2{transition-delay:0.24s}.d3{transition-delay:0.36s}
+@keyframes up{from{opacity:0;transform:translateY(26px)}to{opacity:1;transform:none}}
 
-  /* ── TWIN PARADOX ── */
-  #twin { background: var(--bg); }
-  .twin-wrap { display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; align-items: center; }
-  #twin-canvas { width: 100%; border-radius: 16px; border: 1px solid var(--border); }
-
-  /* ── FOOTER ── */
-  footer {
-    position: relative;
-    z-index: 1;
-    text-align: center;
-    padding: 3rem;
-    border-top: 1px solid var(--border);
-    color: var(--muted);
-    font-size: 0.75rem;
-  }
-
-  /* ── ANIMATIONS ── */
-  @keyframes fadeUp {
-    from { opacity: 0; transform: translateY(30px); }
-    to { opacity: 1; transform: translateY(0); }
-  }
-  @keyframes pulse {
-    0%,100% { opacity: 1; transform: scale(1); }
-    50% { opacity: 0.3; transform: scale(0.8); }
-  }
-  @keyframes glow {
-    0%,100% { box-shadow: 0 0 20px rgba(93,158,255,0.3); }
-    50% { box-shadow: 0 0 40px rgba(93,158,255,0.6); }
-  }
-
-  /* Scroll reveal */
-  .reveal {
-    opacity: 0;
-    transform: translateY(40px);
-    transition: opacity 0.8s ease, transform 0.8s ease;
-  }
-  .reveal.visible { opacity: 1; transform: translateY(0); }
-  .reveal-delay-1 { transition-delay: 0.1s; }
-  .reveal-delay-2 { transition-delay: 0.2s; }
-  .reveal-delay-3 { transition-delay: 0.3s; }
-
-  @media (max-width: 768px) {
-    nav { padding: 1rem 1.5rem; }
-    .nav-links { display: none; }
-    section { padding: 6rem 1.5rem 4rem; }
-    .two-col, .twin-wrap { grid-template-columns: 1fr; gap: 2rem; }
-    .metrics-grid { grid-template-columns: 1fr 1fr; }
-    .time-comparison { grid-template-columns: 1fr 1fr; }
-    .hero-title { font-size: clamp(4rem, 18vw, 8rem); }
-    #videos .container > div:last-child { grid-template-columns: 1fr !important; }
-  }
+@media(max-width:900px){
+  nav{padding:0.9rem 1.5rem}.nav-links{display:none}
+  section{padding:6rem 1.5rem 4rem}
+  .two-col,.twin-g{grid-template-columns:1fr;gap:2.5rem}
+  .ex-g{grid-template-columns:1fr 1fr}
+  .stats{grid-template-columns:1fr 1fr}
+  .vid-g{grid-template-columns:1fr}
+  .vars{grid-template-columns:1fr 1fr}
+  footer{grid-template-columns:1fr}.fr{text-align:left}
+  .h-title{font-size:clamp(4rem,18vw,8rem)}
+}
+@media(max-width:600px){.ex-g,.cmp{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
-
-<canvas id="stars-canvas"></canvas>
+<canvas id="stars"></canvas>
 
 <nav>
-  <div class="nav-logo">VANSHIV GARG</div>
+  <div class="nav-brand">
+    <div class="nav-mark">VG</div>
+    <div class="nav-text">Vanshiv Garg <em>/ Time Dilation</em></div>
+  </div>
   <div class="nav-links">
     <a href="#what">Concept</a>
     <a href="#formula">Formula</a>
     <a href="#interactive">Simulator</a>
     <a href="#examples">Examples</a>
+    <a href="#timeline">History</a>
     <a href="#twin">Twin Paradox</a>
     <a href="#videos">Videos</a>
   </div>
@@ -512,70 +235,53 @@
 <!-- HERO -->
 <section id="hero">
   <div style="width:100%">
-<div class="hero-badge">Special Theory of Relativity — by Vanshiv Garg</div> 
-    <h1 class="hero-title">
-      Time<br>
-      <span class="line2">Dilation</span>
-    </h1>
-    <p class="hero-sub">When you move fast enough, time itself slows down. Einstein's Special Theory of Relativity reveals that time is not absolute — it bends, stretches, and dilates.</p>
-    <div class="hero-cta">
-      <a href="#interactive" class="btn btn-primary">Try Simulator</a>
-      <a href="#what" class="btn btn-outline">Learn the Concept</a>
+    <div class="eyebrow">Special Theory of Relativity &nbsp;·&nbsp; by Vanshiv Garg</div>
+    <h1 class="h-title">TIME<br><span class="stroke">DILATION</span></h1>
+    <p class="h-sub">When you move fast enough, time itself slows down.<br>This is not science fiction — it is measurable, proven physics.</p>
+    <div class="h-btns">
+      <a href="#interactive" class="btn btn-g">Try Simulator</a>
+      <a href="#what" class="btn btn-o">Learn Concept</a>
+      <a href="#videos" class="btn btn-o">Watch Videos</a>
     </div>
-    <div class="clock-strip">
-      <div class="clock-inner" id="clock-strip-inner"></div>
-    </div>
+    <div class="ticker"><div class="ticker-inner" id="tk"></div></div>
   </div>
 </section>
 
-<!-- WHAT IS TIME DILATION -->
+<!-- CONCEPT -->
 <section id="what">
   <div class="container">
     <div class="two-col">
       <div class="reveal">
-        <div class="section-label">01 — Concept</div>
-        <h2 class="section-title">What is Time Dilation?</h2>
-        <p class="section-body">
-          Time dilation is a difference in elapsed time measured by two observers — one at rest and one moving relative to each other, or at different gravitational potentials.
-        </p>
-        <p class="section-body">
-          Proposed by Albert Einstein in 1905, it is a direct consequence of the two postulates of Special Relativity: that the laws of physics are the same in all inertial frames, and that the speed of light is constant for all observers.
-        </p>
-        <p class="section-body">
-          Simply put: <strong style="color:var(--accent)">the faster you move, the slower your clock ticks</strong> relative to a stationary observer.
-        </p>
+        <div class="s-num">01 — Concept</div>
+        <h2 class="s-title">What is<br>Time Dilation?</h2>
+        <p class="s-body">Time dilation is the slowing of time experienced by a moving observer relative to a stationary one. It is not an illusion — clocks genuinely tick at different rates depending on relative velocity.</p>
+        <p class="s-body">Einstein's 1905 Special Relativity is built on two foundational postulates:</p>
+        <div class="posts">
+          <div class="post"><div class="post-n">I</div><div class="post-t">The laws of physics are identical in all inertial (non-accelerating) frames of reference.</div></div>
+          <div class="post"><div class="post-n">II</div><div class="post-t">The speed of light in a vacuum is constant at 299,792,458 m/s for all observers — regardless of the source's motion.</div></div>
+        </div>
       </div>
-      <div class="reveal reveal-delay-1">
-        <div class="light-clock-box">
-          <div class="light-clock-label">Light Clock — Moving vs. Stationary</div>
-          <svg id="light-clock-svg" viewBox="0 0 320 260" xmlns="http://www.w3.org/2000/svg">
-            <!-- Stationary clock -->
-            <text x="80" y="20" text-anchor="middle" fill="rgba(240,234,216,0.5)" font-family="IBM Plex Mono" font-size="9" letter-spacing="1">STATIONARY</text>
-            <rect x="55" y="30" width="50" height="4" rx="2" fill="#e8c84a" opacity="0.7"/>
-            <rect x="55" y="180" width="50" height="4" rx="2" fill="#e8c84a" opacity="0.7"/>
-            <line x1="80" y1="34" x2="80" y2="180" stroke="rgba(232,200,74,0.2)" stroke-width="1" stroke-dasharray="3 3"/>
-            <!-- Bouncing photon stationary -->
-            <circle id="photon-static" cx="80" cy="34" r="5" fill="#6bcfb0"/>
-            <!-- Moving clock -->
-            <text x="240" y="20" text-anchor="middle" fill="rgba(240,234,216,0.5)" font-family="IBM Plex Mono" font-size="9" letter-spacing="1">MOVING FAST</text>
-            <rect id="mirror-top" x="165" y="30" width="50" height="4" rx="2" fill="#e05c2a" opacity="0.7"/>
-            <rect id="mirror-bot" x="165" y="180" width="50" height="4" rx="2" fill="#e05c2a" opacity="0.7"/>
-            <!-- diagonal path hint -->
-            <line id="path-line" x1="190" y1="34" x2="270" y2="180" stroke="rgba(224,92,42,0.15)" stroke-width="1" stroke-dasharray="3 3"/>
-            <circle id="photon-moving" cx="190" cy="34" r="5" fill="#e05c2a"/>
-            <!-- Labels -->
-            <text x="80" y="215" text-anchor="middle" fill="#e8c84a" font-family="IBM Plex Mono" font-size="8">Short path</text>
-            <text x="80" y="228" text-anchor="middle" fill="rgba(240,234,216,0.4)" font-family="IBM Plex Mono" font-size="7">= faster ticks</text>
-            <text x="240" y="215" text-anchor="middle" fill="#e05c2a" font-family="IBM Plex Mono" font-size="8">Longer diagonal path</text>
-            <text x="240" y="228" text-anchor="middle" fill="rgba(240,234,216,0.4)" font-family="IBM Plex Mono" font-size="7">= slower ticks</text>
-            <!-- Speed arrow -->
-            <defs>
-              <marker id="arr" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto">
-                <path d="M0,0 L0,6 L6,3 Z" fill="#e05c2a"/>
-              </marker>
-            </defs>
-            <line x1="165" y1="245" x2="290" y2="245" stroke="#e05c2a" stroke-width="1.5" marker-end="url(#arr)" opacity="0.6"/>
-            <text x="200" y="258" fill="rgba(224,92,42,0.6)" font-family="IBM Plex Mono" font-size="8">moving →</text>
+      <div class="reveal d1">
+        <div class="lc-box">
+          <div class="lc-lbl">Light Clock — why moving clocks tick slower</div>
+          <svg id="lc-svg" viewBox="0 0 320 270" xmlns="http://www.w3.org/2000/svg">
+            <text x="80" y="18" text-anchor="middle" fill="rgba(237,232,220,0.3)" font-family="IBM Plex Mono" font-size="8" letter-spacing="2">STATIONARY</text>
+            <rect x="52" y="27" width="56" height="4" fill="#d4a843" opacity="0.6"/>
+            <rect x="52" y="182" width="56" height="4" fill="#d4a843" opacity="0.6"/>
+            <line x1="80" y1="31" x2="80" y2="182" stroke="rgba(212,168,67,0.12)" stroke-width="1" stroke-dasharray="4 4"/>
+            <circle id="ps" cx="80" cy="31" r="5" fill="#4ab89a"/>
+            <text x="245" y="18" text-anchor="middle" fill="rgba(237,232,220,0.3)" font-family="IBM Plex Mono" font-size="8" letter-spacing="2">MOVING →</text>
+            <rect id="mt" x="165" y="27" width="56" height="4" fill="#c94f22" opacity="0.7"/>
+            <rect id="mb" x="165" y="182" width="56" height="4" fill="#c94f22" opacity="0.7"/>
+            <line id="pl" x1="193" y1="31" x2="275" y2="182" stroke="rgba(201,79,34,0.1)" stroke-width="1" stroke-dasharray="4 4"/>
+            <circle id="pm" cx="193" cy="31" r="5" fill="#c94f22"/>
+            <text x="80" y="210" text-anchor="middle" fill="#d4a843" font-family="IBM Plex Mono" font-size="8">short path</text>
+            <text x="80" y="223" text-anchor="middle" fill="rgba(237,232,220,0.28)" font-family="IBM Plex Mono" font-size="7">= faster ticks</text>
+            <text x="245" y="210" text-anchor="middle" fill="#c94f22" font-family="IBM Plex Mono" font-size="8">longer diagonal</text>
+            <text x="245" y="223" text-anchor="middle" fill="rgba(237,232,220,0.28)" font-family="IBM Plex Mono" font-size="7">= slower ticks</text>
+            <line x1="165" y1="248" x2="308" y2="248" stroke="#c94f22" stroke-width="1" opacity="0.4"/>
+            <polygon points="308,244 316,248 308,252" fill="#c94f22" opacity="0.4"/>
+            <text x="225" y="262" text-anchor="middle" fill="rgba(201,79,34,0.45)" font-family="IBM Plex Mono" font-size="7">velocity →</text>
           </svg>
         </div>
       </div>
@@ -586,113 +292,53 @@
 <!-- FORMULA -->
 <section id="formula">
   <div class="container">
-    <div class="formula-center reveal">
-      <div class="section-label">02 — Mathematics</div>
-      <h2 class="section-title">The Formula</h2>
-      <p class="section-body" style="max-width:500px;margin:0 auto">
-        The exact mathematical relationship between time in a moving frame versus a rest frame.
-      </p>
-      <div class="formula-display">
-        <div class="formula-text">
-          <span class="var">t'</span>
-          <span class="op"> = </span>
-          <span class="var">t</span>
-          <span class="op"> / </span>
-          √(1 − <span class="var">v²</span><span class="op">/</span><span class="var">c²</span>)
-        </div>
-        <div style="color:var(--muted);font-size:0.75rem;margin-top:0.5rem">
-          or equivalently:&nbsp;&nbsp;
-          <span style="color:var(--accent3)">t' = γ · t</span>
-          &nbsp;&nbsp;where&nbsp;&nbsp;
-          <span style="color:var(--accent3)">γ = 1/√(1 − β²)</span>
-        </div>
-        <div class="formula-vars">
-          <div class="var-card">
-            <div class="var-sym">t'</div>
-            <div class="var-name">Dilated Time</div>
-            <div class="var-desc">Time elapsed in the moving frame (what the astronaut experiences)</div>
-          </div>
-          <div class="var-card">
-            <div class="var-sym">t</div>
-            <div class="var-name">Proper Time</div>
-            <div class="var-desc">Time elapsed in the rest frame (what the Earth observer measures)</div>
-          </div>
-          <div class="var-card">
-            <div class="var-sym">v</div>
-            <div class="var-name">Relative Velocity</div>
-            <div class="var-desc">Speed of the moving object relative to the observer</div>
-          </div>
-          <div class="var-card">
-            <div class="var-sym">c</div>
-            <div class="var-name">Speed of Light</div>
-            <div class="var-desc">≈ 3 × 10⁸ m/s — the universal speed limit</div>
-          </div>
-          <div class="var-card">
-            <div class="var-sym" style="color:var(--accent3)">γ</div>
-            <div class="var-name">Lorentz Factor</div>
-            <div class="var-desc">Always ≥ 1. Approaches ∞ as v → c. This is the "stretching" factor.</div>
-          </div>
-          <div class="var-card">
-            <div class="var-sym" style="color:var(--accent3)">β</div>
-            <div class="var-name">Beta (v/c)</div>
-            <div class="var-desc">Velocity as a fraction of the speed of light. β=0 at rest, β→1 at light speed.</div>
-          </div>
-        </div>
+    <div class="reveal">
+      <div class="s-num">02 — Mathematics</div>
+      <h2 class="s-title">The Formula</h2>
+      <p class="s-body">The exact relationship between time in a moving frame and a rest frame — derived purely from the two postulates above.</p>
+    </div>
+    <div class="f-block reveal d1">
+      <div class="f-eq"><span class="v">t'</span><span class="op"> = </span><span class="v">t</span><span class="op"> / </span>√( 1 − <span class="v">v²</span><span class="op"> / </span><span class="v">c²</span> )</div>
+      <div class="f-alt">equivalently → <span class="hl">t' = γt</span> &nbsp; where &nbsp; <span class="hl">γ = 1/√(1−β²)</span> &nbsp; and &nbsp; <span class="hl">β = v/c</span></div>
+      <div class="div-line"><span class="div-text">variables defined</span></div>
+      <div class="vars">
+        <div class="vc"><div class="vc-s">t'</div><div class="vc-n">Dilated time</div><div class="vc-d">Time in the moving frame. Always greater than t — the astronaut ages slower.</div></div>
+        <div class="vc"><div class="vc-s">t</div><div class="vc-n">Proper time</div><div class="vc-d">Time in the rest frame. What an Earth-based clock reads.</div></div>
+        <div class="vc"><div class="vc-s">v</div><div class="vc-n">Relative velocity</div><div class="vc-d">Speed of the moving object relative to the observer. Must be less than c.</div></div>
+        <div class="vc"><div class="vc-s">c</div><div class="vc-n">Speed of light</div><div class="vc-d">≈ 3×10⁸ m/s. The universal speed limit. Nothing with mass can reach it.</div></div>
+        <div class="vc"><div class="vc-s" style="color:var(--teal)">γ</div><div class="vc-n">Lorentz factor</div><div class="vc-d">Always ≥ 1. Equals 1 at rest, approaches ∞ as v→c.</div></div>
+        <div class="vc"><div class="vc-s" style="color:var(--teal)">β</div><div class="vc-n">Beta (v/c)</div><div class="vc-d">Velocity as a fraction of c. Ranges 0 (rest) to just under 1 (near-light).</div></div>
       </div>
     </div>
   </div>
 </section>
 
-<!-- INTERACTIVE SIMULATOR -->
+<!-- SIMULATOR -->
 <section id="interactive">
   <div class="container">
     <div class="reveal">
-      <div class="section-label">03 — Simulator</div>
-      <h2 class="section-title">Live Time Dilation<br>Calculator</h2>
+      <div class="s-num">03 — Simulator</div>
+      <h2 class="s-title">Live Calculator</h2>
+      <p class="s-body">Drag the slider and watch time dilation update in real time across every metric.</p>
     </div>
-    <div class="interactive-wrap reveal reveal-delay-1" style="margin-top:2.5rem">
-      <div class="slider-section">
-        <div class="slider-label">
-          <span>Velocity (fraction of light speed)</span>
-          <span class="slider-val" id="vel-display">0.50c</span>
-        </div>
-        <input type="range" id="vel-input" min="0" max="99.9" step="0.1" value="50" oninput="updateSim()">
-        <div style="display:flex;justify-content:space-between;font-size:0.65rem;color:var(--muted);margin-top:0.5rem">
-          <span>0 (rest)</span><span>0.5c</span><span>0.99c (near light)</span>
-        </div>
+    <div class="sim-wrap reveal d1">
+      <div class="sl-row">
+        <div class="sl-top"><span class="sl-lbl">Velocity (fraction of speed of light)</span><div class="vel-big" id="vel-disp">0.50c</div></div>
+        <input type="range" id="vel" min="0" max="99.9" step="0.1" value="50" oninput="sim()">
+        <div class="tl"><span>0 — rest</span><span>0.50c</span><span>0.87c</span><span>0.99c — near light</span></div>
       </div>
-
-      <div class="metrics-grid">
-        <div class="metric">
-          <span class="metric-num" id="m-gamma">1.15</span>
-          <div class="metric-label">γ (Lorentz Factor)</div>
-        </div>
-        <div class="metric">
-          <span class="metric-num" id="m-ratio">87%</span>
-          <div class="metric-label">Rocket / Earth time</div>
-        </div>
-        <div class="metric">
-          <span class="metric-num" id="m-saved">0.13 yr</span>
-          <div class="metric-label">Time saved / year</div>
-        </div>
+      <div class="stats">
+        <div class="st"><span class="st-v" id="sg">1.155</span><span class="st-l">γ Lorentz factor</span></div>
+        <div class="st"><span class="st-v" id="sr">86.6%</span><span class="st-l">Rocket / Earth time</span></div>
+        <div class="st"><span class="st-v" id="ss">0.134y</span><span class="st-l">Years saved per year</span></div>
+        <div class="st"><span class="st-v" id="sb">0.500</span><span class="st-l">β (v/c)</span></div>
       </div>
-
-      <canvas id="rocket-canvas"></canvas>
-
-      <div class="time-comparison">
-        <div class="time-box earth">
-          <div class="time-box-label">🌍 Earth Observer</div>
-          <div class="time-box-val" id="earth-time">10.00</div>
-          <div class="time-box-unit">years elapsed</div>
-        </div>
-        <div class="time-box rocket">
-          <div class="time-box-label">🚀 Astronaut</div>
-          <div class="time-box-val" id="rocket-time">8.66</div>
-          <div class="time-box-unit">years experienced</div>
-        </div>
+      <canvas id="rkt"></canvas>
+      <div class="cmp">
+        <div class="cb e"><div class="cb-l">🌍 Earth — 10 years pass</div><div class="cb-v">10.00</div><div class="cb-u">years</div></div>
+        <div class="cb r"><div class="cb-l">🚀 Astronaut experiences</div><div class="cb-v" id="rt">8.66</div><div class="cb-u">years</div></div>
       </div>
-
-      <div id="insight-box" style="margin-top:1.5rem;background:rgba(232,200,74,0.04);border:1px solid rgba(232,200,74,0.15);border-left:3px solid var(--accent);border-radius:0;padding:1.25rem;font-size:0.82rem;color:var(--muted);line-height:1.7;font-family:var(--font-body)"></div>
+      <div id="ins"></div>
     </div>
   </div>
 </section>
@@ -701,45 +347,36 @@
 <section id="examples">
   <div class="container">
     <div class="reveal">
-      <div class="section-label">04 — Real World</div>
-      <h2 class="section-title">Where Time Dilation<br>Actually Happens</h2>
+      <div class="s-num">04 — Real World</div>
+      <h2 class="s-title">Where It<br>Actually Happens</h2>
     </div>
-    <div class="examples-grid">
-      <div class="example-card reveal reveal-delay-1">
-        <div class="example-icon">🛰️</div>
-        <div class="example-title">GPS Satellites</div>
-        <div class="example-body">GPS satellites orbit at ~14,000 km/h. Special relativity causes their clocks to lose ~7 microseconds/day. Without correction, your GPS would drift by 2+ km every day!</div>
-        <span class="example-stat">γ ≈ 1.000000001</span>
+    <div class="ex-g">
+      <div class="ex reveal"><span class="ex-icon">🛰️</span><div class="ex-t">GPS Satellites</div><div class="ex-b">GPS satellites orbit at ~14,000 km/h. Their clocks run slow by ~7 µs/day. Without relativity corrections, GPS navigation would drift by 2+ km every single day.</div><span class="ex-tag">γ ≈ 1.000000001</span></div>
+      <div class="ex reveal d1"><span class="ex-icon">⚛️</span><div class="ex-t">Cosmic Muons</div><div class="ex-b">Muons from cosmic rays travel at 0.998c. Half-life of 2.2 µs means they should decay before reaching Earth. Time dilation stretches their lifetime by γ≈15 — they do reach us.</div><span class="ex-tag">γ ≈ 15.8</span></div>
+      <div class="ex reveal d2"><span class="ex-icon">✈️</span><div class="ex-t">Hafele-Keating</div><div class="ex-b">1971: Atomic clocks flown on commercial jets were compared to ground clocks. The flying clocks lost exactly the nanoseconds predicted by Special Relativity. First direct experimental proof.</div><span class="ex-tag">~59 ns lost</span></div>
+      <div class="ex reveal"><span class="ex-icon">🎬</span><div class="ex-t">Interstellar (2014)</div><div class="ex-b">On Miller's planet near black hole Gargantua: 1 hour = 7 Earth years. Vetted by Nobel physicist Kip Thorne — the most scientifically accurate cinematic depiction of time dilation.</div><span class="ex-tag">1 hr = 7 yrs</span></div>
+      <div class="ex reveal d1"><span class="ex-icon">🔬</span><div class="ex-t">CERN Accelerator</div><div class="ex-b">Particles at CERN reach 0.9999c with γ up to 7,000. Unstable particles survive thousands of times longer in the lab frame. Engineers account for this in every design.</div><span class="ex-tag">γ up to 7,000</span></div>
+      <div class="ex reveal d2"><span class="ex-icon">🌑</span><div class="ex-t">Black Hole Edge</div><div class="ex-b">Near an event horizon, gravitational time dilation (General Relativity) becomes extreme. For a distant observer, a clock dropped into a black hole appears to freeze permanently.</div><span class="ex-tag">γ → ∞</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- HISTORY -->
+<section id="timeline">
+  <div class="container">
+    <div class="two-col" style="gap:4rem;align-items:flex-start">
+      <div class="reveal">
+        <div class="s-num">05 — History</div>
+        <h2 class="s-title">How We<br>Got Here</h2>
+        <p class="s-body">From a failed experiment in 1887 to atomic clocks on jets — the century that proved time is not what we thought.</p>
       </div>
-      <div class="example-card reveal reveal-delay-2">
-        <div class="example-icon">⚛️</div>
-        <div class="example-title">Cosmic Ray Muons</div>
-        <div class="example-body">Muons created in the upper atmosphere travel at 0.998c. Their half-life is 2.2 µs — they should decay before reaching us. But time dilation stretches their lifespan and they survive to the surface.</div>
-        <span class="example-stat">γ ≈ 15.8</span>
-      </div>
-      <div class="example-card reveal reveal-delay-3">
-        <div class="example-icon">✈️</div>
-        <div class="example-title">Hafele-Keating (1971)</div>
-        <div class="example-body">Atomic clocks were flown around the world on commercial jets and compared to ground clocks. The flying clocks lost exactly the nanoseconds predicted by Special Relativity — first direct proof!</div>
-        <span class="example-stat">~59 nanoseconds lost</span>
-      </div>
-      <div class="example-card reveal">
-        <div class="example-icon">🎬</div>
-        <div class="example-title">Interstellar (2014)</div>
-        <div class="example-body">Near the black hole Gargantua, Cooper's team experience 1 hour while 7 years pass on Earth. The film's science was vetted by physicist Kip Thorne — an accurate portrayal of extreme time dilation.</div>
-        <span class="example-stat">1 hour = 7 years</span>
-      </div>
-      <div class="example-card reveal reveal-delay-1">
-        <div class="example-icon">🔬</div>
-        <div class="example-title">Particle Accelerators</div>
-        <div class="example-body">At CERN, particles accelerated to 0.9999c experience time dilation of γ ≈ 7000. Engineers must account for this in their designs — unstable particles live thousands of times longer in the lab frame.</div>
-        <span class="example-stat">γ up to 7,000</span>
-      </div>
-      <div class="example-card reveal reveal-delay-2">
-        <div class="example-icon">🌟</div>
-        <div class="example-title">Near Black Holes</div>
-        <div class="example-body">Gravitational time dilation (General Relativity) causes clocks near massive objects to tick slower. At the event horizon of a black hole, time effectively stops for an outside observer.</div>
-        <span class="example-stat">γ → ∞ at event horizon</span>
+      <div class="tl-wrap reveal d1">
+        <div class="tl-item"><div class="tl-yr">1887</div><div class="tl-ev">Michelson-Morley Experiment</div><div class="tl-dt">Failed to detect the "luminiferous ether." Showed light speed is the same in all directions. The crisis that made relativity necessary.</div></div>
+        <div class="tl-item"><div class="tl-yr">1905</div><div class="tl-ev">Einstein's Annus Mirabilis</div><div class="tl-dt">Published "On the Electrodynamics of Moving Bodies" — introducing Special Relativity and the time dilation equation to the world.</div></div>
+        <div class="tl-item"><div class="tl-yr">1908</div><div class="tl-ev">Minkowski Spacetime</div><div class="tl-dt">Hermann Minkowski unified space and time into a 4D manifold. "Henceforth, space by itself and time by itself are doomed to fade away."</div></div>
+        <div class="tl-item"><div class="tl-yr">1938</div><div class="tl-ev">Ives-Stilwell Experiment</div><div class="tl-dt">First direct experimental confirmation of time dilation using the transverse Doppler effect on fast-moving hydrogen canal rays.</div></div>
+        <div class="tl-item"><div class="tl-yr">1971</div><div class="tl-ev">Hafele-Keating Experiment</div><div class="tl-dt">Atomic clocks on jets matched relativistic predictions exactly. Time dilation is real, measurable, and now used in everyday technology.</div></div>
+        <div class="tl-item" style="border-bottom:none"><div class="tl-yr">2002</div><div class="tl-ev">Penning Trap Measurement</div><div class="tl-dt">Relativistic time dilation confirmed to 2.2 parts in 10²² — the most precise verification of Special Relativity ever achieved.</div></div>
       </div>
     </div>
   </div>
@@ -748,427 +385,184 @@
 <!-- TWIN PARADOX -->
 <section id="twin">
   <div class="container">
-    <div class="twin-wrap">
+    <div class="twin-g">
       <div class="reveal">
-        <div class="section-label">05 — Famous Thought Experiment</div>
-        <h2 class="section-title">The Twin Paradox</h2>
-        <p class="section-body">Imagine two twins: <strong style="color:var(--accent)">Alex</strong> stays on Earth, while <strong style="color:var(--accent2)">Sam</strong> travels to a distant star at 0.87c and returns.</p>
-        <p class="section-body">When Sam returns, Alex has aged 20 years — but Sam has only aged 10 years. Sam is now 10 years younger than their twin!</p>
-        <p class="section-body">The "paradox": shouldn't each twin see the other as moving? Yes — but Sam actually accelerates (turns around), breaking the symmetry. The one who accelerates ages less. This is NOT a paradox — Special Relativity resolves it completely.</p>
-        <div style="background:rgba(255,209,102,0.06);border:1px solid rgba(255,209,102,0.2);border-radius:12px;padding:1.25rem;margin-top:1.5rem">
-          <div style="font-size:0.7rem;color:var(--accent3);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:0.5rem">Key Insight</div>
-          <div style="font-size:0.82rem;color:var(--muted);line-height:1.7">The resolution: inertial symmetry is broken when Sam decelerates, turns around, and accelerates back. The asymmetry in acceleration determines who ages less.</div>
+        <div class="s-num">06 — Thought Experiment</div>
+        <h2 class="s-title">The Twin<br>Paradox</h2>
+        <p class="s-body"><strong style="color:var(--gold)">Arjun</strong> stays on Earth. <strong style="color:var(--orange)">Priya</strong> boards a rocket to a star 10 light-years away at 0.87c and returns.</p>
+        <p class="s-body">On return: Arjun has aged 23 years. Priya has aged only 11.5 years. She is now younger than her twin.</p>
+        <p class="s-body">The apparent paradox: both see the other as moving — so shouldn't both age less? No. Priya physically decelerates and turns around. She experiences a real force. Arjun never does. This breaks the symmetry.</p>
+        <div class="ib">
+          <div class="ib-l">Resolution</div>
+          <div class="ib-t">Special Relativity applies only to inertial (non-accelerating) frames. Priya's turnaround involves real acceleration — she feels it. Arjun never accelerates. This asymmetry is what determines who ages less. No paradox exists.</div>
         </div>
       </div>
-      <div class="reveal reveal-delay-1">
-        <canvas id="twin-canvas" height="400"></canvas>
-      </div>
+      <div class="reveal d1"><canvas id="twin-c" height="420"></canvas></div>
     </div>
   </div>
 </section>
 
-<!-- VIDEOS SECTION -->
-<section id="videos" style="background:var(--bg2)">
+<!-- VIDEOS -->
+<section id="videos">
   <div class="container">
     <div class="reveal">
-      <div class="section-label">06 — Watch & Learn</div>
-      <h2 class="section-title">Videos on<br>Time Dilation</h2>
-      <p class="section-body" style="max-width:520px">Best videos to understand the concept visually — from top science channels.</p>
+      <div class="s-num">07 — Watch</div>
+      <h2 class="s-title">Videos That<br>Make It Click</h2>
+      <p class="s-body">Handpicked from the best science communicators on the internet.</p>
     </div>
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;margin-top:2.5rem" class="reveal reveal-delay-1">
-      <div>
-        <iframe width="100%" height="240"
-          src="https://www.youtube.com/embed/yuD34tEpRFw"
-          title="Time Dilation - Veritasium"
-          frameborder="0"
-          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-          allowfullscreen
-          style="display:block;border:1px solid rgba(232,200,74,0.2)">
-        </iframe>
-        <div style="font-family:var(--font-mono);font-size:0.7rem;color:var(--muted);margin-top:0.6rem;letter-spacing:0.05em">
-          Time Dilation — <span style="color:var(--accent)">Veritasium</span>
+    <div class="vid-g reveal d1">
+      <div class="vid-wrap featured">
+        <div class="vid-frame">
+          <iframe src="https://www.youtube.com/embed/0_sdDJz5Zzk?si=HChbjYbC_vDWB9M_" title="Time Dilation" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
         </div>
+        <div class="vid-info"><div class="vid-t">Time Dilation — Complete Explanation</div><div class="vid-ch">★ Featured</div></div>
       </div>
-      <div>
-        <iframe width="100%" height="240"
-          src="https://www.youtube.com/embed/GgvajuvSpF4"
-          title="Twin Paradox - minutephysics"
-          frameborder="0"
-          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-          allowfullscreen
-          style="display:block;border:1px solid rgba(232,200,74,0.2)">
-        </iframe>
-        <div style="font-family:var(--font-mono);font-size:0.7rem;color:var(--muted);margin-top:0.6rem;letter-spacing:0.05em">
-          Twin Paradox — <span style="color:var(--accent)">minutephysics</span>
+      <div class="vid-wrap">
+        <div class="vid-frame">
+          <iframe src="https://www.youtube.com/embed/yuD34tEpRFw" title="GPS Time Dilation - Veritasium" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
         </div>
+        <div class="vid-info"><div class="vid-t">Why GPS Needs Relativity</div><div class="vid-ch">Veritasium</div></div>
       </div>
-      <div>
-        <iframe width="100%" height="240"
-          src="https://www.youtube.com/embed/RuqBFkzpPVs"
-          title="Special Relativity - PBS Space Time"
-          frameborder="0"
-          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-          allowfullscreen
-          style="display:block;border:1px solid rgba(232,200,74,0.2)">
-        </iframe>
-        <div style="font-family:var(--font-mono);font-size:0.7rem;color:var(--muted);margin-top:0.6rem;letter-spacing:0.05em">
-          Special Relativity — <span style="color:var(--accent)">PBS Space Time</span>
+      <div class="vid-wrap">
+        <div class="vid-frame">
+          <iframe src="https://www.youtube.com/embed/GgvajuvSpF4" title="Twin Paradox - minutephysics" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
         </div>
+        <div class="vid-info"><div class="vid-t">The Twin Paradox Resolved</div><div class="vid-ch">minutephysics</div></div>
       </div>
-      <div>
-        <iframe width="100%" height="240"
-          src="https://www.youtube.com/embed/5D9XhM5DaYE"
-          title="Interstellar Science - Veritasium"
-          frameborder="0"
-          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-          allowfullscreen
-          style="display:block;border:1px solid rgba(232,200,74,0.2)">
-        </iframe>
-        <div style="font-family:var(--font-mono);font-size:0.7rem;color:var(--muted);margin-top:0.6rem;letter-spacing:0.05em">
-          Interstellar's Science — <span style="color:var(--accent)">Veritasium</span>
+      <div class="vid-wrap">
+        <div class="vid-frame">
+          <iframe src="https://www.youtube.com/embed/RuqBFkzpPVs" title="Special Relativity - PBS Space Time" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
         </div>
+        <div class="vid-info"><div class="vid-t">Special Relativity Deep Dive</div><div class="vid-ch">PBS Space Time</div></div>
       </div>
     </div>
   </div>
 </section>
 
+<!-- FOOTER -->
 <footer>
-  <div style="margin-bottom:0.4rem;color:var(--accent);font-family:var(--font-head);font-size:1.8rem;letter-spacing:0.08em">VANSHIV GARG</div>
-  <div style="font-family:var(--font-mono);font-size:0.7rem;color:var(--muted);letter-spacing:0.1em">SPECIAL THEORY OF RELATIVITY — TIME DILATION</div>
-  <div style="margin-top:0.75rem;font-size:0.65rem;color:rgba(240,234,216,0.25);font-family:var(--font-mono)">Einstein, A. (1905). "Zur Elektrodynamik bewegter Körper"</div>
+  <div><div class="fl-name">VANSHIV<br>GARG</div><div class="fl-sub">Time Dilation · Special Relativity</div></div>
+  <div class="fr">
+    <div class="fr-cite">Einstein, A. (1905)<br>"Zur Elektrodynamik bewegter Körper"<br>Annalen der Physik, 17, 891–921</div>
+    <div class="fr-yr">1905</div>
+  </div>
 </footer>
 
 <script>
-// ── STARS ──
-(function() {
-  const canvas = document.getElementById('stars-canvas');
-  const ctx = canvas.getContext('2d');
-  let stars = [];
-  function resize() {
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
-  }
-  function makeStars() {
-    stars = [];
-    for (let i = 0; i < 200; i++) {
-      stars.push({
-        x: Math.random() * canvas.width,
-        y: Math.random() * canvas.height,
-        r: Math.random() * 1.5,
-        a: Math.random(),
-        speed: 0.002 + Math.random() * 0.005
-      });
-    }
-  }
-  function drawStars() {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    stars.forEach(s => {
-      s.a += s.speed;
-      const alpha = 0.3 + 0.5 * Math.abs(Math.sin(s.a));
-      ctx.beginPath();
-      ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
-      ctx.fillStyle = `rgba(240,225,180,${alpha})`;
-      ctx.fill();
-    });
-    requestAnimationFrame(drawStars);
-  }
-  resize();
-  makeStars();
-  drawStars();
-  window.addEventListener('resize', () => { resize(); makeStars(); });
+// STARS
+(()=>{
+  const c=document.getElementById('stars'),x=c.getContext('2d');let s=[];
+  const rs=()=>{c.width=innerWidth;c.height=innerHeight};
+  const ms=()=>{s=[];for(let i=0;i<180;i++)s.push({x:Math.random()*c.width,y:Math.random()*c.height,r:Math.random()*1.4,a:Math.random(),sp:0.003+Math.random()*0.005})};
+  const dr=()=>{
+    x.clearRect(0,0,c.width,c.height);
+    s.forEach(p=>{p.a+=p.sp;const al=0.2+0.45*Math.abs(Math.sin(p.a));x.beginPath();x.arc(p.x,p.y,p.r,0,Math.PI*2);x.fillStyle=`rgba(245,228,185,${al})`;x.fill()});
+    requestAnimationFrame(dr);
+  };
+  rs();ms();dr();window.addEventListener('resize',()=>{rs();ms()});
 })();
 
-// ── CLOCK STRIP ──
-(function() {
-  const items = [
-    'Earth time: normal','Rocket time: slower','γ = Lorentz factor',
-    't\' = t/√(1-v²/c²)','Speed of light: 3×10⁸ m/s','Time is relative',
-    'Muons survive','GPS correction','Twin paradox','Einstein 1905',
-  ];
-  const strip = document.getElementById('clock-strip-inner');
-  const doubled = [...items, ...items];
-  strip.innerHTML = doubled.map(t =>
-    `<div class="clock-item"><div class="clock-dot"></div>${t}</div>`
-  ).join('');
+// TICKER
+(()=>{
+  const items=[['γ','Lorentz factor'],["t' = t/√(1-v²/c²)",'the formula'],['c = 3×10⁸ m/s','light speed'],['1905','Einstein'],['GPS','corrected daily'],['muons','survive 0.998c'],['1971','Hafele-Keating'],['twin paradox','resolved'],['time is relative','not absolute'],['CERN','γ up to 7000']];
+  const el=document.getElementById('tk');const dbl=[...items,...items];
+  el.innerHTML=dbl.map(([k,v])=>`<div class="t-item"><b>${k}</b>${v}</div>`).join('');
 })();
 
-// ── LIGHT CLOCK ANIMATION ──
-(function() {
-  const ps = document.getElementById('photon-static');
-  const pm = document.getElementById('photon-moving');
-  const topM = document.getElementById('mirror-top');
-  const botM = document.getElementById('mirror-bot');
-  const pathL = document.getElementById('path-line');
-
-  let t = 0;
-  let dirS = 1, dirM = 1;
-  let yS = 34, yM = 34;
-  let xM = 190;
-  const topY = 34, botY = 180;
-  let xMirrorLeft = 165;
-  let xMirrorOffset = 0;
-
-  function tick() {
-    t += 0.5;
-    // stationary photon
-    yS += dirS * 1.5;
-    if (yS >= botY) { yS = botY; dirS = -1; }
-    if (yS <= topY) { yS = topY; dirS = 1; }
-    ps.setAttribute('cy', yS);
-
-    // moving clock drifts right then wraps
-    xMirrorOffset = (xMirrorOffset + 0.5) % 100;
-    const mx = 165 + xMirrorOffset;
-    topM.setAttribute('x', mx);
-    botM.setAttribute('x', mx);
-
-    // moving photon goes diagonal
-    yM += dirM * 1.2;
-    xM += 0.4;
-    if (xM > mx + 50) xM = mx;
-    if (yM >= botY) { yM = botY; dirM = -1; }
-    if (yM <= topY) { yM = topY; dirM = 1; }
-    pm.setAttribute('cy', yM);
-    pm.setAttribute('cx', xM);
-    pathL.setAttribute('x1', mx);
-    pathL.setAttribute('x2', mx + 80);
-
-    requestAnimationFrame(tick);
-  }
-  tick();
+// LIGHT CLOCK
+(()=>{
+  const ps=document.getElementById('ps'),pm=document.getElementById('pm'),mt=document.getElementById('mt'),mb=document.getElementById('mb'),pl=document.getElementById('pl');
+  let yS=31,yM=31,xM=193,dS=1,dM=1,off=0;const T=31,B=182;
+  const lc=()=>{
+    yS+=dS*1.65;if(yS>=B){yS=B;dS=-1}if(yS<=T){yS=T;dS=1}ps.setAttribute('cy',yS);
+    off=(off+0.42)%88;const mx=165+off;mt.setAttribute('x',mx);mb.setAttribute('x',mx);
+    yM+=dM*1.1;xM+=0.36;if(xM>mx+56)xM=mx;if(yM>=B){yM=B;dM=-1}if(yM<=T){yM=T;dM=1}
+    pm.setAttribute('cy',yM);pm.setAttribute('cx',xM);pl.setAttribute('x1',mx);pl.setAttribute('x2',mx+82);
+    requestAnimationFrame(lc);
+  };lc();
 })();
 
-// ── SIMULATOR ──
-const rocketCanvas = document.getElementById('rocket-canvas');
-const rctx = rocketCanvas.getContext('2d');
-let rocketX = 0;
-let rocketAnimId = null;
-let currentVel = 50;
+// SIMULATOR
+const rktC=document.getElementById('rkt'),rx=rktC.getContext('2d');
+let vCur=50,rktX=0,rafId=null;
+const gam=v=>{const b=v/100;return 1/Math.sqrt(Math.max(1e-9,1-b*b))};
 
-function gamma(v) {
-  const b = v / 100;
-  return 1 / Math.sqrt(Math.max(1e-10, 1 - b * b));
+function sim(){
+  const v=parseFloat(document.getElementById('vel').value);vCur=v;
+  const g=gam(v),b=v/100,ratio=1/g,rY=(10*ratio).toFixed(2);
+  document.getElementById('vel-disp').textContent=b.toFixed(2)+'c';
+  document.getElementById('sg').textContent=g.toFixed(3);
+  document.getElementById('sr').textContent=(ratio*100).toFixed(1)+'%';
+  document.getElementById('ss').textContent=(1-ratio).toFixed(3)+'y';
+  document.getElementById('sb').textContent=b.toFixed(3);
+  document.getElementById('rt').textContent=rY;
+  let msg='';
+  if(b<0.1)msg=`At ${b.toFixed(2)}c, dilation is negligible — γ=${g.toFixed(5)}. Only atomic clocks can detect any difference.`;
+  else if(b<0.5)msg=`At ${b.toFixed(2)}c, the astronaut ages ${(ratio*100).toFixed(1)}% as fast as Earth. For every 10 Earth years, they experience ${rY} years.`;
+  else if(b<0.87)msg=`At ${b.toFixed(2)}c, γ=${g.toFixed(2)} — significant dilation. A 10-year Earth mission feels like ${rY} years to the astronaut.`;
+  else if(b<0.99)msg=`At ${b.toFixed(2)}c, γ=${g.toFixed(1)} — dramatic! This is Interstellar territory. The astronaut barely ages over a 10-year Earth mission.`;
+  else msg=`At ${b.toFixed(3)}c — within 1% of light! γ=${Math.round(g)}. Reaching this needs energy approaching infinity. Pure physics theory.`;
+  document.getElementById('ins').textContent=msg;
 }
 
-function updateSim() {
-  const v = parseFloat(document.getElementById('vel-input').value);
-  currentVel = v;
-  const g = gamma(v);
-  const beta = v / 100;
-  const ratio = 1 / g;
-  const earthYrs = 10;
-  const rocketYrs = earthYrs * ratio;
-  const saved = earthYrs - rocketYrs;
-
-  document.getElementById('vel-display').textContent = beta.toFixed(2) + 'c';
-  document.getElementById('m-gamma').textContent = g.toFixed(3);
-  document.getElementById('m-ratio').textContent = (ratio * 100).toFixed(1) + '%';
-  document.getElementById('m-saved').textContent = saved.toFixed(2) + ' yr';
-  document.getElementById('earth-time').textContent = earthYrs.toFixed(2);
-  document.getElementById('rocket-time').textContent = rocketYrs.toFixed(2);
-
-  let insight = '';
-  if (beta < 0.1) {
-    insight = `At ${beta.toFixed(2)}c, time dilation is negligible. γ ≈ ${g.toFixed(4)}. You'd need extremely precise atomic clocks to even detect the difference.`;
-  } else if (beta < 0.5) {
-    insight = `At ${beta.toFixed(2)}c, the astronaut ages about ${(ratio*100).toFixed(0)}% as fast as someone on Earth. For every 10 years on Earth, the astronaut experiences ${rocketYrs.toFixed(2)} years.`;
-  } else if (beta < 0.9) {
-    insight = `At ${beta.toFixed(2)}c, time dilation is significant! γ = ${g.toFixed(2)}, meaning the astronaut ages ${(ratio*100).toFixed(0)}% as fast. This is the regime explored in science fiction.`;
-  } else if (beta < 0.99) {
-    insight = `At ${beta.toFixed(2)}c, time dilation is dramatic! γ = ${g.toFixed(1)}. The astronaut experiences only ${rocketYrs.toFixed(2)} years while 10 years pass on Earth. Interstellar travel becomes theoretically feasible.`;
-  } else {
-    insight = `At ${beta.toFixed(3)}c — nearly the speed of light! γ = ${g.toFixed(0)}. Time is severely dilated. The astronaut barely ages while decades pass on Earth. Approaching c requires infinite energy.`;
-  }
-  document.getElementById('insight-box').textContent = insight;
+function drawRkt(){
+  const W=rktC.width,H=rktC.height,b=vCur/100,sp=1+b*6;
+  rktX=(rktX+sp)%(W+120);rx.clearRect(0,0,W,H);
+  for(let i=0;i<35;i++){const sx=(i*43+W-rktX*0.25)%W,sy=14+(i*19)%(H-28),ln=3+b*58;rx.beginPath();rx.moveTo(sx,sy);rx.lineTo(sx-ln,sy);rx.strokeStyle=`rgba(212,168,67,${0.05+b*0.32})`;rx.lineWidth=0.4+b*0.8;rx.stroke()}
+  const ex=rktX-32,ey=H/2,el=8+b*72;
+  const gr=rx.createLinearGradient(ex,ey,ex-el,ey);
+  gr.addColorStop(0,`rgba(201,79,34,${0.9*b})`);gr.addColorStop(0.4,`rgba(240,200,70,${0.4*b})`);gr.addColorStop(1,'rgba(201,79,34,0)');
+  rx.beginPath();rx.moveTo(ex,ey-8);rx.lineTo(ex-el,ey);rx.lineTo(ex,ey+8);rx.fillStyle=gr;rx.fill();
+  rx.save();rx.translate(rktX,H/2);
+  rx.fillStyle='#ede8dc';rx.beginPath();rx.ellipse(0,0,30,13,0,0,Math.PI*2);rx.fill();
+  rx.fillStyle='#d4a843';rx.beginPath();rx.moveTo(30,0);rx.lineTo(48,-5);rx.lineTo(48,5);rx.closePath();rx.fill();
+  rx.fillStyle='#c94f22';rx.beginPath();rx.moveTo(-20,10);rx.lineTo(-34,22);rx.lineTo(-10,14);rx.closePath();rx.fill();
+  rx.restore();
+  rx.font='10px IBM Plex Mono,monospace';
+  rx.fillStyle='rgba(212,168,67,0.65)';rx.fillText('EARTH FRAME: normal tick rate',12,16);
+  rx.fillStyle='rgba(201,79,34,0.65)';rx.fillText(`ROCKET FRAME: ${(100/gam(vCur)).toFixed(0)}% of Earth tick rate`,12,H-8);
+  rafId=requestAnimationFrame(drawRkt);
 }
 
-// Rocket canvas
-function drawRocket() {
-  const W = rocketCanvas.width, H = rocketCanvas.height;
-  rctx.clearRect(0, 0, W, H);
+function initRkt(){rktC.width=rktC.offsetWidth;rktC.height=rktC.offsetHeight||150;if(rafId)cancelAnimationFrame(rafId);drawRkt()}
 
-  const beta = currentVel / 100;
-  const speed = 1 + beta * 5;
-  rocketX = (rocketX + speed) % (W + 100);
-
-  // Star streaks based on speed
-  rctx.save();
-  for (let i = 0; i < 30; i++) {
-    const sx = (i * 37 + W - rocketX * 0.3) % W;
-    const sy = 20 + (i * 13) % (H - 40);
-    const len = 4 + beta * 40;
-    rctx.beginPath();
-    rctx.moveTo(sx, sy);
-    rctx.lineTo(sx - len, sy);
-    rctx.strokeStyle = `rgba(232,200,74,${0.1 + beta * 0.4})`;
-    rctx.lineWidth = 0.5 + beta;
-    rctx.stroke();
-  }
-  rctx.restore();
-
-  // Exhaust
-  const ex = rocketX - 30;
-  const ey = H / 2;
-  const exhaustLen = 10 + beta * 60;
-  const grad = rctx.createLinearGradient(ex, ey, ex - exhaustLen, ey);
-  grad.addColorStop(0, `rgba(255,107,107,${0.8 * beta})`);
-  grad.addColorStop(0.5, `rgba(255,200,80,${0.4 * beta})`);
-  grad.addColorStop(1, 'rgba(255,107,107,0)');
-  rctx.beginPath();
-  rctx.moveTo(ex, ey - 6);
-  rctx.lineTo(ex - exhaustLen, ey);
-  rctx.lineTo(ex, ey + 6);
-  rctx.fillStyle = grad;
-  rctx.fill();
-
-  // Rocket body
-  rctx.save();
-  rctx.translate(rocketX, H / 2);
-  rctx.fillStyle = '#e8e8f0';
-  rctx.beginPath();
-  rctx.ellipse(0, 0, 28, 12, 0, 0, Math.PI * 2);
-  rctx.fill();
-  // Nose
-  rctx.fillStyle = '#5d9eff';
-  rctx.beginPath();
-  rctx.moveTo(28, 0);
-  rctx.lineTo(42, -4);
-  rctx.lineTo(42, 4);
-  rctx.closePath();
-  rctx.fill();
-  // Fin
-  rctx.fillStyle = '#ff6b6b';
-  rctx.beginPath();
-  rctx.moveTo(-20, 8);
-  rctx.lineTo(-30, 18);
-  rctx.lineTo(-10, 12);
-  rctx.closePath();
-  rctx.fill();
-  rctx.restore();
-
-  // Clock labels
-  rctx.font = '10px IBM Plex Mono, monospace';
-  rctx.fillStyle = 'rgba(232,200,74,0.7)';
-  rctx.fillText('Earth time: ticking normally', 12, 18);
-  rctx.fillStyle = 'rgba(224,92,42,0.7)';
-  rctx.fillText(`Rocket time: ${(100/gamma(currentVel)).toFixed(0)}% speed`, 12, H - 10);
-
-  rocketAnimId = requestAnimationFrame(drawRocket);
-}
-
-function initRocketCanvas() {
-  rocketCanvas.width = rocketCanvas.offsetWidth;
-  rocketCanvas.height = rocketCanvas.offsetHeight || 160;
-  if (rocketAnimId) cancelAnimationFrame(rocketAnimId);
-  drawRocket();
-}
-
-// ── TWIN PARADOX CANVAS ──
-(function() {
-  const canvas = document.getElementById('twin-canvas');
-  const ctx = canvas.getContext('2d');
-  let animT = 0;
-
-  function draw() {
-    const W = canvas.width || 400, H = canvas.height || 400;
-    ctx.clearRect(0, 0, W, H);
-
-    // Background
-    ctx.fillStyle = 'rgba(7,7,26,0.8)';
-    ctx.fillRect(0, 0, W, H);
-
-    const midX = W / 2;
-    const topY = 40, botY = H - 40;
-    const prog = (Math.sin(animT * 0.02) + 1) / 2; // 0 to 1 oscillation
-
-    // Alex (stays) — vertical line
-    ctx.strokeStyle = 'rgba(232,200,74,0.6)';
-    ctx.lineWidth = 2;
+// TWIN CANVAS
+(()=>{
+  const c=document.getElementById('twin-c'),ctx=c.getContext('2d');let t=0;
+  const draw=()=>{
+    const W=c.width,H=c.height;ctx.clearRect(0,0,W,H);
+    ctx.fillStyle='rgba(15,13,9,0.92)';ctx.fillRect(0,0,W,H);
+    const prog=(Math.sin(t*0.018)+1)/2;
+    const lx=W*0.28,topY=40,botY=H-50,pkX=W*0.72,pkY=(topY+botY)/2;
+    ctx.strokeStyle='rgba(212,168,67,0.45)';ctx.lineWidth=1.5;ctx.setLineDash([]);
+    ctx.beginPath();ctx.moveTo(lx,topY);ctx.lineTo(lx,botY);ctx.stroke();
+    ctx.beginPath();ctx.arc(lx,topY+prog*(botY-topY),9,0,Math.PI*2);ctx.fillStyle='#d4a843';ctx.fill();
+    ctx.strokeStyle='rgba(201,79,34,0.3)';ctx.lineWidth=1;ctx.setLineDash([5,5]);
+    ctx.beginPath();ctx.moveTo(lx,topY);ctx.lineTo(pkX,pkY);ctx.lineTo(lx,botY);ctx.stroke();
     ctx.setLineDash([]);
-    ctx.beginPath();
-    ctx.moveTo(midX - 80, topY);
-    ctx.lineTo(midX - 80, botY);
-    ctx.stroke();
-
-    // Alex dot
-    const alexY = topY + prog * (botY - topY);
-    ctx.beginPath();
-    ctx.arc(midX - 80, alexY, 8, 0, Math.PI * 2);
-    ctx.fillStyle = '#e8c84a';
-    ctx.fill();
-
-    // Sam (travels) — V shape
-    const peakX = midX + 80, peakY = (topY + botY) / 2;
-    const samX = prog < 0.5
-      ? (midX - 80) + prog * 2 * ((peakX) - (midX - 80))
-      : peakX + (prog - 0.5) * 2 * ((midX - 80) - peakX);
-    const samY = prog < 0.5
-      ? topY + prog * 2 * (peakY - topY)
-      : peakY + (prog - 0.5) * 2 * (botY - peakY);
-
-    // Draw Sam's path
-    ctx.strokeStyle = 'rgba(224,92,42,0.4)';
-    ctx.lineWidth = 1.5;
-    ctx.setLineDash([4, 4]);
-    ctx.beginPath();
-    ctx.moveTo(midX - 80, topY);
-    ctx.lineTo(peakX, peakY);
-    ctx.lineTo(midX - 80, botY);
-    ctx.stroke();
-    ctx.setLineDash([]);
-
-    // Sam dot
-    ctx.beginPath();
-    ctx.arc(samX, samY, 8, 0, Math.PI * 2);
-    ctx.fillStyle = '#e05c2a';
-    ctx.fill();
-
-    // Star at turnaround
-    ctx.beginPath();
-    ctx.arc(peakX, peakY, 6, 0, Math.PI * 2);
-    ctx.fillStyle = '#6bcfb0';
-    ctx.fill();
-
-    // Labels
-    ctx.font = '11px IBM Plex Mono';
-    ctx.fillStyle = '#e8c84a';
-    ctx.fillText('Alex', midX - 120, topY + 5);
-    ctx.fillStyle = '#e05c2a';
-    ctx.fillText('Sam', peakX + 10, peakY - 10);
-    ctx.fillStyle = '#6bcfb0';
-    ctx.fillText('★ Star', peakX + 10, peakY + 20);
-
-    // Age display
-    const alexAge = 20 + Math.round(prog * 20);
-    const samAge = 10 + Math.round(prog * 10);
-    ctx.fillStyle = 'rgba(232,200,74,0.85)';
-    ctx.font = '13px IBM Plex Mono';
-    ctx.fillText(`Alex: ${alexAge} yrs`, 16, botY - 20);
-    ctx.fillStyle = 'rgba(224,92,42,0.85)';
-    ctx.fillText(`Sam: ${samAge} yrs`, 16, botY - 5);
-
-    animT++;
-    requestAnimationFrame(draw);
-  }
-
-  canvas.width = canvas.offsetWidth || 400;
-  canvas.height = 400;
-  draw();
+    const pX=prog<0.5?lx+prog*2*(pkX-lx):pkX+(prog-0.5)*2*(lx-pkX);
+    const pY=prog<0.5?topY+prog*2*(pkY-topY):pkY+(prog-0.5)*2*(botY-pkY);
+    ctx.beginPath();ctx.arc(pX,pY,9,0,Math.PI*2);ctx.fillStyle='#c94f22';ctx.fill();
+    ctx.beginPath();ctx.arc(pkX,pkY,7,0,Math.PI*2);ctx.fillStyle='#4ab89a';ctx.fill();
+    ctx.font='11px IBM Plex Mono';
+    ctx.fillStyle='#d4a843';ctx.fillText('ARJUN',lx-55,topY+4);
+    ctx.fillStyle='#c94f22';ctx.fillText('PRIYA',pkX+12,pkY-12);
+    ctx.fillStyle='#4ab89a';ctx.fillText('★ star',pkX+12,pkY+20);
+    ctx.font='12px IBM Plex Mono';
+    ctx.fillStyle='rgba(212,168,67,0.85)';ctx.fillText(`Arjun: ${20+Math.round(prog*20)} yrs`,14,botY+8);
+    ctx.fillStyle='rgba(201,79,34,0.85)';ctx.fillText(`Priya: ${10+Math.round(prog*10)} yrs`,W/2,botY+8);
+    t++;requestAnimationFrame(draw);
+  };
+  c.width=c.offsetWidth||400;c.height=420;draw();
 })();
 
-// ── SCROLL REVEAL ──
-const observer = new IntersectionObserver(entries => {
-  entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
-}, { threshold: 0.15 });
-document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+// SCROLL REVEAL
+const obs=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting)e.target.classList.add('in')}),{threshold:0.1});
+document.querySelectorAll('.reveal').forEach(el=>obs.observe(el));
 
-// ── INIT ──
-window.addEventListener('load', () => {
-  initRocketCanvas();
-  updateSim();
-});
-window.addEventListener('resize', initRocketCanvas);
-updateSim();
+window.addEventListener('load',()=>{initRkt();sim()});
+window.addEventListener('resize',initRkt);
+sim();
 </script>
 </body>
 </html>

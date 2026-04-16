@@ -88,4 +88,4 @@ git push -u origin main
 ---
 
 *Einstein, A. (1905). "Zur Elektrodynamik bewegter Körper". Annalen der Physik.* 
-*~ By Vanshiv Garg*
+~ By Vanshiv Garg 

@@ -1,6 +1,6 @@
 # ⏱️ Time Dilation — Interactive Physics Website
 
-> A fully animated, interactive website explaining **Time Dilation** from Einstein's Special Theory of Relativity, built for B.Tech 1st Year Engineering Physics students.
+> A fully animated, interactive website explaining **Time Dilation** from Einstein's Special Theory of Relativity, built for Physics students.
 
 🌐 **Live Demo**: [View on GitHub Pages](https://Vanshiv46.github.io/time-dilation)
 
@@ -87,4 +87,5 @@ git push -u origin main
 
 ---
 
-*Einstein, A. (1905). "Zur Elektrodynamik bewegter Körper". Annalen der Physik.*
+*Einstein, A. (1905). "Zur Elektrodynamik bewegter Körper". Annalen der Physik.* 
+*~ By Vanshiv Garg*
